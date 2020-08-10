@@ -10,7 +10,7 @@
         uint skuCount;
         
         // State: For Sale 
-        enum State { ForSale, Sold }
+        enum State { ForSale, Sold, Shipped }
         
         // Struct: "Item" with the following fields: name, sku, price, state, seller, buyer
         struct Item {
@@ -30,6 +30,9 @@
         
         // Event Sold
         event Sold(uint sku);
+        
+        // Event Shipped
+        event Shipped(uint sku);
         
         // modifier: Only Owner to see if msg.sender == owner of the contract
         modifier onlyOwner() {
@@ -116,4 +119,14 @@
             seller = items[_sku].seller;
             buyer = items[_sku].buyer;
         }
+        
+        // Define a function 'shipItem' that allows the seller to change the state to 'Shipped'
+        function shipItem(uint sku) public sold(sku) verifyCaller(items[sku].seller) {
+            // Update state
+            items[sku].state = State.Shipped;
+            
+            // Emit the appropriate event
+            emit Shipped(sku);
+        }
+        
 }
