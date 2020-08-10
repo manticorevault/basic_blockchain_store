@@ -64,6 +64,14 @@
             _;
         }
         
+        // modifier: check value that checks the price and refunds the remaining balance to the buyer
+        modifier checkValue(uint _sku) {
+            _;
+            uint _price = items[_sku].price;
+            uint amountToRefund = msg.value - _price;
+            items[_sku].buyer.transfer(amountToRefund);
+        }
+        
         // function: constructor to set some initial values
         constructor() public {
             owner = msg.sender;
@@ -83,7 +91,7 @@
         }
         
         // function: buy Item
-        function buyItem(uint sku) forSale(sku) paidEnough(items[sku].price) public payable {
+        function buyItem(uint sku) forSale(sku) paidEnough(items[sku].price) checkValue(sku) public payable {
             address buyer = msg.sender;
             uint price = items[sku].price;
             
